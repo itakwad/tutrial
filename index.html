@@ -49,7 +49,7 @@
                 weatherIcon: '',
 
                 async fetchWeather() {
-                    const apiKey = '9a50568c25ff007f021eda335cecc37f'; // استبدل بمفتاح API الخاص بك
+                    const apiKey = '--------------------------------'; // استبدل بمفتاح API الخاص بك
                     const url = `https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=${apiKey}&lang=ar`;
                     const response = await fetch(url);
                     this.weatherData = await response.json();
