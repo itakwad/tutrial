@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حالة الطقس - Alpine.js</title>
+    <!-- مكتبة Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- مكتبة Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- مكتبة الأيقونات Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('https://wallpapers.com/images/hd/cloudy-weather-digital-illustration-hi16vkc00cp99uzv.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+
+</head>
+
+<body class="flex items-center justify-center h-screen text-white">
+    <div x-data="weatherApp" class="bg-gray-900 bg-opacity-75 shadow-lg rounded-lg p-6 w-full max-w-md text-center">
+        <h1 class="text-3xl font-bold mb-4 flex items-center justify-center">
+            <i class="ri-cloud-sun-fill text-yellow-400 mr-2"></i> حالة الطقس
+        </h1>
+        <input type="text" x-model="city" placeholder="أدخل اسم المدينة"
+            class="w-full p-2 border border-gray-400 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-300 mb-4">
+        <button @click="fetchWeather" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">عرض الطقس
+        </button>
+        <div x-show="weatherData">
+            <h2 class="text-2xl font-semibold" x-text="weatherData.name"></h2>
+            <p class="mt-2 flex items-center justify-center text-lg">
+                <i x-bind:class="weatherIcon" class="text-4xl mr-2"></i>
+                <span x-text="'الحرارة: ' + weatherData.main.temp + '°C'"></span>
+            
+            </p>
+            <p class="text-lg" x-text="'الوصف: ' + weatherData.weather[0].description"></p>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('weatherApp', () => ({
+                city: '',
+                weatherData: null,
+                weatherIcon: '',
+
+                async fetchWeather() {
+                    const apiKey = '9a50568c25ff007f021eda335cecc37f'; // استبدل بمفتاح API الخاص بك
+                    const url = `https://api.openweathermap.org/data/2.5/weather?q=${this.city}&units=metric&appid=${apiKey}&lang=ar`;
+                    const response = await fetch(url);
+                    this.weatherData = await response.json();
+                    this.setWeatherIcon(this.weatherData.weather[0].main)
+                },
+                setWeatherIcon(weatherMain) {
+                    const icons = {
+                        'Clear': 'ri-sun-fill text-yellow-500',       // سماء صافية
+                        'Clouds': 'ri-cloud-fill text-gray-400',      // غيوم
+                        'Drizzle': 'ri-drizzle-fill text-blue-400',   // رذاذ
+                        'Rain': 'ri-rainy-fill text-blue-500',        // أمطار
+                        'Thunderstorm': 'ri-thunderstorms-fill text-yellow-600', // عاصفة رعدية
+                        'Snow': 'ri-snowy-fill text-blue-300',        // ثلوج
+                        'Mist': 'ri-foggy-fill text-gray-300',        // ضباب
+                        'Fog': 'ri-foggy-fill text-gray-300',         // ضباب كثيف
+                        'Haze': 'ri-haze-fill text-gray-400'          // ضباب خفيف
+                    };
+                    this.weatherIcon = icons[weatherMain] || 'ri-questionnaire-fill text-gray-500';
+                }
+            }))
+
+        });
+    </script>
+</body>
+
+</html>
